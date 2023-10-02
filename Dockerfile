@@ -9,7 +9,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all the files from the host to the container's working directory
 COPY . .
 # Expose port 8000 for the application
-# EXPOSE 8000
+EXPOSE 8000
 # Start the application using uvicorn with the specified host and port
-CMD python src/bot.py
-# fixed Dockerfile
+CMD python bot.py
