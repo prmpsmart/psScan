@@ -12,8 +12,8 @@ COPY . .
 # Installing needed packages and dependencies.**
 RUN pip install -r requirements.txt
 
-# This command basically executes your main file with Python.
-CMD ["python", "bot.py"]
+# Expose port 8000 for the application
+EXPOSE 8000
 
-# Setting a port for your app communications with Telegram servers.
-EXPOSE 80/tcp
+# Start the application using uvicorn with the specified host and port
+CMD ["uvicorn", "bot:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,13 +1,15 @@
-import time as tm
+import threading
 import telebot
 from telebot import types
+from fastapi import FastAPI
+
 from crypto_coins import *
 
 TELEGRAM_BOT_TOKEN = "6522595578:AAEoohT3dDPq7JGczjSffttpl3NVR-GoY7Q"
 ETHERSCAN_APIKEY = "5VSCYDENMVJQUMZXP4JZP26Z1U8GVV3HN1"
 ETHEREUM_API_URL = "https://api.etherscan.io/api"
 
-bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=False)
+bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 
 def getMention(message: types.Message):
@@ -117,8 +119,32 @@ def callback_crypto_stocks(call):
             bot.send_message(call.message.chat.id, coin_response)
 
 
-while True:
-    try:
-        bot.infinity_polling()
-    except Exception:
-        tm.sleep(1)
+def start():
+    # bot.polling(non_stop=True)
+
+    threading.Thread(target=bot.polling, kwargs=dict(non_stop=True)).start()
+
+
+app = FastAPI(
+    title="psScan Telegram bot",
+    version="1.0.0",
+    on_startup=[start],
+    # on_shutdown=[exit],
+)
+
+
+@app.get("/")
+async def home() -> str:
+    return "Hello World"
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        app,
+        use_colors=True,
+        host="127.0.0.1",
+        port=8000,
+        reload=0,
+    )
