@@ -11,4 +11,5 @@ COPY . .
 # Expose port 8000 for the application
 EXPOSE 8000
 # Start the application using uvicorn with the specified host and port
-CMD python bot.py
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+

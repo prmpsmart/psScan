@@ -137,13 +137,8 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
     # Run the bot until the user presses Ctrl-C
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
-    # application.run_webhook(
-    #     listen="0.0.0.0",
-    #     port=int(os.environ.get("PORT", 5000)),
-    #     url_path=TELEGRAM_BOT_TOKEN,
-    #     webhook_url=+TELEGRAM_BOT_TOKEN,
-    # )
+    # application.run_polling(allowed_updates=Update.ALL_TYPES)
+    application.run_webhook(listen="0.0.0.0", port=8000)
 
 
 if __name__ == "__main__":
