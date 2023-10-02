@@ -1,15 +1,19 @@
 
+# Choosing an image for you container.
 FROM python:3.9-slim
+# FROM python:3.11.0
+
 # Set the working directory inside the container to /app
 WORKDIR /app
-# Copy the requirements.txt file from the host to the container's working directory
-COPY requirements.txt .
-# Install the requirements specified in requirements.txt using pip
-RUN pip install --no-cache-dir -r requirements.txt
-# Copy all the files from the host to the container's working directory
-COPY . .
-# Expose port 8000 for the application
-EXPOSE 8000
-# Start the application using uvicorn with the specified host and port
-CMD python bot.py
 
+# This command would copy EVERY FILE from your project folder into your container, so be careful.
+COPY . .
+
+# Installing needed packages and dependencies.**
+RUN pip install -r requirements.txt
+
+# This command basically executes your main file with Python.
+CMD ["python", "bot.py"]
+
+# Setting a port for your app communications with Telegram servers.
+EXPOSE 80/tcp
