@@ -87,9 +87,16 @@ def send_report_to_user(bot, user_id, tax_received_in_marketing_wallet):
 # context.
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
-    user = update.effective_user
-    await update.message.reply_html(
-        rf"""Hi {user.mention_html()}!
+    text = update.message.text.strip()
+    if text.startswith("/"):
+        if text[1:].lower().split() not in ["start", "help", "bal"]:
+            await update.message.reply_html(
+                rf"Hi {user.mention_html()}!\n\nSupported commands are: /start, /help, /bal"
+            )
+    else:
+        user = update.effective_user
+        await update.message.reply_html(
+            rf"""Hi {user.mention_html()}!
 This bot is just a proof-of-work done by:
 Miracle Apata a.k.a @prmpsmart
 
@@ -97,8 +104,8 @@ To check the balance of a token address type /bal followed by the address
 e.g
 
 /bal 0x1d81D79d0D5cc899E16d8cdaD7995B8bEb6f7114""",
-        # reply_markup=ForceReply(selective=True),
-    )
+            # reply_markup=ForceReply(selective=True),
+        )
 
 
 async def bal(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -106,10 +113,9 @@ async def bal(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = update.message.text.strip()
 
     if text:
-        text = text.split()[0]
-        contract_information = address_balance(text)
-        # print(contract_information)
-        text = "STATUS: {status}\nMESSAGE: {message}\nRESULT: {result}".format(
+        text_ = text.split()[-1]
+        contract_information = address_balance(text_)
+        text = "STATUS: {status}\nMESSAGE: {message}\nRESULT: {result}\n\n\nUSER_INPUT: {text}".format(
             **contract_information
         )
         await update.message.reply_text(text)
