@@ -88,12 +88,17 @@ def send_report_to_user(bot, user_id, tax_received_in_marketing_wallet):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     text = update.message.text.strip()
-    if text.startswith("/") and text[1:].lower().split() not in ["start", "help", "bal"]:
-            await update.message.reply_html(
-                rf"Hi {user.mention_html()}!\n\nSupported commands are: /start, /help, /bal"
-            )
+    user = update.effective_user
+
+    if text.startswith("/") and text[1:].lower().split() not in [
+        "start",
+        "help",
+        "bal",
+    ]:
+        await update.message.reply_html(
+            rf"Hi {user.mention_html()}!\n\nSupported commands are: /start, /help, /bal"
+        )
     else:
-        user = update.effective_user
         await update.message.reply_html(
             rf"""Hi {user.mention_html()}!
 This bot is just a proof-of-work done by:
