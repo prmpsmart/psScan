@@ -1,4 +1,5 @@
-import os
+import os, socket
+import threading
 from telegram import ForceReply, Update
 from telegram.ext import (
     Application,
@@ -90,13 +91,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = update.message.text.strip()
     user = update.effective_user
 
-    if text.startswith("/") and text[1:].lower().split() not in [
+    if text.startswith("/") and text[1:].lower().split()[0] not in [
+        "",
         "start",
         "help",
         "bal",
     ]:
         await update.message.reply_html(
-            rf"Hi {user.mention_html()}!\n\nSupported commands are: /start, /help, /bal"
+            rf"""Hi {user.mention_html()}!
+
+Supported commands are: /start, /help, /bal"""
         )
     else:
         await update.message.reply_html(
@@ -119,8 +123,13 @@ async def bal(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if text:
         text_ = text.split()[-1]
         contract_information = address_balance(text_)
-        text = "STATUS: {status}\nMESSAGE: {message}\nRESULT: {result}\n\n\nUSER_INPUT: {text}".format(
-            **contract_information
+        text = """STATUS: {status}
+MESSAGE: {message}
+RESULT: {result}
+
+
+USER_INPUT: {text}""".format(
+            text=text, **contract_information
         )
         await update.message.reply_text(text)
 
@@ -144,6 +153,7 @@ def main() -> None:
     application.add_handler(CommandHandler("bal", bal))
 
     # on non command i.e message - echo the message on Telegram
+    application.add_handler(MessageHandler(filters.COMMAND, start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
     # Run the bot until the user presses Ctrl-C
@@ -152,4 +162,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    p = socket.socket()
+    p.bind(("0.0.0.0", 80))
+    threading.Thread(target=p.listen, args=[5]).start()
     main()
